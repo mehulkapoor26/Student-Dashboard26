@@ -1,23 +1,27 @@
 import React from 'react';
-import { Palette, LogOut, Sparkles, User, Bell, ChevronDown } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { useSelector } from 'react-redux';
+import { Palette, LogOut, Bell, ShoppingBag, User } from 'lucide-react';
+import { useAuth } from '../context/AuthContext';
+import { useTheme } from '../context/ThemeContext';
+import { selectCartCount } from '../store/cartSlice';
 
-export default function Header({ theme, setTheme, activeTab, onLogout, currentUser }) {
-  const themes = [
-    { id: 'light', name: 'Light Mode', icon: '☀️' },
-    { id: 'dark', name: 'Dark Mode', icon: '🌙' }
-  ];
+export default function Header({ onLogout }) {
+  const { currentUser } = useAuth();
+  const { theme, setTheme, themes } = useTheme();
+  const cartCount = useSelector(selectCartCount);
 
-  const studentName = currentUser?.name || 'student';
+  const studentName = currentUser?.name || 'Student';
   const initialLetter = studentName.charAt(0).toUpperCase();
   const deptLabel = currentUser?.department ? `Student • ${currentUser.department}` : 'Student • CSE Dept';
 
   return (
     <header className="top-navbar">
       <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
-        <h1 style={{ fontSize: '1.4rem', fontWeight: 800, color: 'var(--text-heading)', display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <span style={{ 
-            background: 'linear-gradient(135deg, var(--primary), var(--accent-pink))', 
-            WebkitBackgroundClip: 'text', 
+        <h1 style={{ fontSize: '1.4rem', fontWeight: 800, color: 'var(--text-heading)', display: 'flex', alignItems: 'center', gap: '8px', margin: 0 }}>
+          <span style={{
+            background: 'linear-gradient(135deg, var(--primary), var(--accent-pink))',
+            WebkitBackgroundClip: 'text',
             WebkitTextFillColor: 'transparent',
             fontSize: '1.5rem',
             fontFamily: "'Space Grotesk', sans-serif"
@@ -25,24 +29,24 @@ export default function Header({ theme, setTheme, activeTab, onLogout, currentUs
             Student Dashboard
           </span>
         </h1>
-        <span style={{ 
-          fontSize: '1rem', 
-          fontStyle: 'italic', 
-          fontWeight: 700, 
+        <span style={{
+          fontSize: '0.95rem',
+          fontStyle: 'italic',
+          fontWeight: 700,
           color: 'var(--text-muted)',
           letterSpacing: '0.5px'
         }}>
-          Explore Your Potential
+          Chitkara CUIET • PE-II
         </span>
       </div>
 
-      <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-        {/* Theme Switcher Selector */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
+        {/* Theme Switcher Selector from ThemeContext */}
         <div style={{ position: 'relative', display: 'flex', alignItems: 'center', gap: '8px', background: 'var(--bg-subtle)', padding: '6px 12px', borderRadius: '20px', border: '1px solid var(--border-color)' }}>
           <Palette size={16} style={{ color: 'var(--primary)' }} />
           <span style={{ fontSize: '0.8rem', fontWeight: 600, color: 'var(--text-muted)' }}>Theme:</span>
-          <select 
-            value={theme} 
+          <select
+            value={theme}
             onChange={(e) => setTheme(e.target.value)}
             style={{
               background: 'transparent',
@@ -54,7 +58,7 @@ export default function Header({ theme, setTheme, activeTab, onLogout, currentUs
               outline: 'none'
             }}
           >
-            {themes.map(t => (
+            {themes.map((t) => (
               <option key={t.id} value={t.id} style={{ background: 'var(--bg-card)', color: 'var(--text-main)' }}>
                 {t.icon} {t.name}
               </option>
@@ -62,20 +66,65 @@ export default function Header({ theme, setTheme, activeTab, onLogout, currentUs
           </select>
         </div>
 
+        {/* Cart Quick Button (Redux State) */}
+        <Link
+          to="/store"
+          style={{
+            position: 'relative',
+            background: 'var(--bg-subtle)',
+            border: '1px solid var(--border-color)',
+            borderRadius: '50%',
+            width: '38px',
+            height: '38px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            color: 'var(--text-main)',
+            textDecoration: 'none'
+          }}
+          title="Campus Store & Cart (Redux)"
+        >
+          <ShoppingBag size={18} />
+          {cartCount > 0 && (
+            <span style={{
+              position: 'absolute',
+              top: '-4px',
+              right: '-4px',
+              backgroundColor: '#ef4444',
+              color: '#ffffff',
+              fontSize: '0.7rem',
+              fontWeight: 800,
+              borderRadius: '50%',
+              minWidth: '18px',
+              height: '18px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              padding: '0 2px'
+            }}>
+              {cartCount}
+            </span>
+          )}
+        </Link>
+
         {/* Notifications trigger */}
-        <button style={{
-          background: 'var(--bg-subtle)',
-          border: '1px solid var(--border-color)',
-          borderRadius: '50%',
-          width: '38px',
-          height: '38px',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          color: 'var(--text-main)',
-          cursor: 'pointer',
-          position: 'relative'
-        }}>
+        <Link
+          to="/updates"
+          style={{
+            background: 'var(--bg-subtle)',
+            border: '1px solid var(--border-color)',
+            borderRadius: '50%',
+            width: '38px',
+            height: '38px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            color: 'var(--text-main)',
+            position: 'relative',
+            textDecoration: 'none'
+          }}
+          title="Circulars & Updates"
+        >
           <Bell size={18} />
           <span style={{
             position: 'absolute',
@@ -86,19 +135,23 @@ export default function Header({ theme, setTheme, activeTab, onLogout, currentUs
             backgroundColor: 'var(--accent-pink)',
             borderRadius: '50%'
           }} />
-        </button>
+        </Link>
 
-        {/* Student Avatar Card */}
-        <div style={{
-          display: 'flex',
-          alignItems: 'center',
-          gap: '12px',
-          backgroundColor: 'var(--bg-sidebar)',
-          color: 'var(--sidebar-text)',
-          padding: '6px 14px 6px 8px',
-          borderRadius: '30px',
-          border: '1px solid var(--sidebar-border)'
-        }}>
+        {/* Student Avatar Card linking to /my-info */}
+        <Link
+          to="/my-info"
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '12px',
+            backgroundColor: 'var(--bg-sidebar)',
+            color: 'var(--sidebar-text)',
+            padding: '6px 14px 6px 8px',
+            borderRadius: '30px',
+            border: '1px solid var(--sidebar-border)',
+            textDecoration: 'none'
+          }}
+        >
           <div style={{
             width: '32px',
             height: '32px',
@@ -119,10 +172,10 @@ export default function Header({ theme, setTheme, activeTab, onLogout, currentUs
               {deptLabel}
             </span>
           </div>
-        </div>
+        </Link>
 
         {/* Logout Button */}
-        <button 
+        <button
           onClick={onLogout}
           style={{
             backgroundColor: '#fff0f0',

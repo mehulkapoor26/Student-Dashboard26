@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import { useAuth } from '../../context/AuthContext';
+import { useToast } from '../../context/ToastContext';
 import { 
   User, 
   BookOpen, 
@@ -20,7 +22,12 @@ import {
   RotateCcw
 } from 'lucide-react';
 
-export default function MyInfoView({ currentUser, onUpdateUser }) {
+export default function MyInfoView({ currentUser: propUser, onUpdateUser: propUpdate }) {
+  const { currentUser: authUser, updateProfile } = useAuth();
+  const { showSuccess } = useToast();
+  const currentUser = propUser || authUser;
+  const onUpdateUser = propUpdate || updateProfile;
+
   const [isEditing, setIsEditing] = useState(false);
   const [saveSuccess, setSaveSuccess] = useState(false);
   const [formError, setFormError] = useState('');
@@ -74,6 +81,7 @@ export default function MyInfoView({ currentUser, onUpdateUser }) {
       onUpdateUser(formData);
     }
 
+    showSuccess('Profile updated successfully!');
     setSaveSuccess(true);
     setIsEditing(false);
     setTimeout(() => {

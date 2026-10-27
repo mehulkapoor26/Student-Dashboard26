@@ -1,30 +1,39 @@
 import React from 'react';
-import { 
-  LayoutGrid, 
-  User, 
-  BarChart3, 
-  Calendar, 
-  Bell, 
-  Folder, 
-  BookOpen, 
-  CreditCard, 
-  Home, 
-  Trophy, 
+import { NavLink } from 'react-router-dom';
+import { useSelector } from 'react-redux';
+import { selectCartCount } from '../store/cartSlice';
+import {
+  LayoutGrid,
+  User,
+  BarChart3,
+  Calendar,
+  Bell,
+  Folder,
+  BookOpen,
+  CreditCard,
+  Trophy,
   Settings,
-  ShieldAlert
+  ShoppingBag,
+  Briefcase,
+  Sparkles
 } from 'lucide-react';
 
-export default function Sidebar({ activeTab, setActiveTab }) {
+export default function Sidebar() {
+  const cartCount = useSelector(selectCartCount);
+
   const menuItems = [
-    { id: 'dashboard', label: 'Dashboard', icon: LayoutGrid },
-    { id: 'my-info', label: 'My Info', icon: User },
-    { id: 'attendance', label: 'Attendance Ledger', icon: BarChart3 },
-    { id: 'calendar', label: 'Academic Calendar', icon: Calendar },
-    { id: 'updates', label: 'Updates', icon: Bell },
-    { id: 'notes', label: 'Notes', icon: Folder },
-    { id: 'library', label: 'Library Terminal', icon: BookOpen },
-    { id: 'fee', label: 'Fee', icon: CreditCard },
-    { id: 'performance', label: 'Performance', icon: Trophy },
+    { to: '/dashboard', label: 'Dashboard', icon: LayoutGrid },
+    { to: '/my-info', label: 'My Info', icon: User },
+    { to: '/attendance', label: 'Attendance Ledger', icon: BarChart3 },
+    { to: '/calendar', label: 'Academic Calendar', icon: Calendar },
+    { to: '/updates', label: 'Updates & Notices', icon: Bell },
+    { to: '/notes', label: 'Notes', icon: Folder },
+    { to: '/library', label: 'Library Terminal', icon: BookOpen },
+    { to: '/fee', label: 'Fee Payments', icon: CreditCard },
+    { to: '/performance', label: 'Performance', icon: Trophy },
+    // Syllabus Mini Projects
+    { to: '/portfolio', label: 'Student Portfolio', icon: Briefcase, badge: 'Syllabus' },
+    { to: '/store', label: 'Campus Store', icon: ShoppingBag, count: cartCount, badge: 'Redux' }
   ];
 
   return (
@@ -53,7 +62,7 @@ export default function Sidebar({ activeTab, setActiveTab }) {
           AU
         </div>
         <div>
-          <h2 style={{ fontSize: '1.25rem', fontWeight: 800, tracking: '1px', color: '#ffffff', lineHeight: 1 }}>
+          <h2 style={{ fontSize: '1.25rem', fontWeight: 800, tracking: '1px', color: '#ffffff', lineHeight: 1, margin: 0 }}>
             APEX
           </h2>
           <span style={{ fontSize: '0.65rem', color: '#94a3b8', letterSpacing: '2px', textTransform: 'uppercase' }}>
@@ -62,63 +71,93 @@ export default function Sidebar({ activeTab, setActiveTab }) {
         </div>
       </div>
 
-      {/* Navigation List */}
+      {/* Navigation List using React Router NavLink */}
       <nav style={{ padding: '16px 12px', flex: 1, display: 'flex', flexDirection: 'column', gap: '4px', overflowY: 'auto' }}>
         {menuItems.map((item) => {
           const Icon = item.icon;
-          const isActive = activeTab === item.id;
           return (
-            <button
-              key={item.id}
-              onClick={() => setActiveTab(item.id)}
-              style={{
+            <NavLink
+              key={item.to}
+              to={item.to}
+              style={({ isActive }) => ({
                 display: 'flex',
                 alignItems: 'center',
-                gap: '14px',
-                padding: '12px 16px',
+                justifyContent: 'space-between',
+                padding: '11px 14px',
                 borderRadius: '10px',
-                border: 'none',
+                textDecoration: 'none',
                 backgroundColor: isActive ? 'var(--sidebar-active-bg)' : 'transparent',
                 color: isActive ? 'var(--sidebar-active-text)' : 'var(--sidebar-text)',
                 fontWeight: isActive ? 700 : 500,
-                fontSize: '0.925rem',
-                cursor: 'pointer',
-                textAlign: 'left',
-                width: '100%',
+                fontSize: '0.885rem',
                 transition: 'all 0.2s ease',
                 boxShadow: isActive ? '0 4px 12px rgba(0,0,0,0.15)' : 'none'
-              }}
+              })}
             >
-              <Icon size={20} style={{ opacity: isActive ? 1 : 0.7 }} />
-              <span>{item.label}</span>
-            </button>
+              {({ isActive }) => (
+                <>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                    <Icon size={19} style={{ opacity: isActive ? 1 : 0.75, flexShrink: 0 }} />
+                    <span>{item.label}</span>
+                  </div>
+
+                  {item.count > 0 && (
+                    <span style={{
+                      backgroundColor: '#ef4444',
+                      color: '#ffffff',
+                      fontSize: '0.72rem',
+                      fontWeight: 800,
+                      padding: '2px 7px',
+                      borderRadius: '10px'
+                    }}>
+                      {item.count}
+                    </span>
+                  )}
+
+                  {!item.count && item.badge && (
+                    <span style={{
+                      backgroundColor: isActive ? 'rgba(255,255,255,0.2)' : 'rgba(139, 92, 246, 0.25)',
+                      color: isActive ? '#ffffff' : '#c084fc',
+                      fontSize: '0.68rem',
+                      fontWeight: 700,
+                      padding: '2px 6px',
+                      borderRadius: '6px'
+                    }}>
+                      {item.badge}
+                    </span>
+                  )}
+                </>
+              )}
+            </NavLink>
           );
         })}
       </nav>
 
       {/* Settings Bottom section */}
       <div style={{ padding: '16px 12px', borderTop: '1px solid var(--sidebar-border)' }}>
-        <button
-          onClick={() => setActiveTab('settings')}
-          style={{
+        <NavLink
+          to="/settings"
+          style={({ isActive }) => ({
             display: 'flex',
             alignItems: 'center',
-            gap: '14px',
-            padding: '12px 16px',
+            gap: '12px',
+            padding: '11px 14px',
             borderRadius: '10px',
-            border: 'none',
-            backgroundColor: activeTab === 'settings' ? 'var(--sidebar-active-bg)' : 'transparent',
-            color: activeTab === 'settings' ? 'var(--sidebar-active-text)' : 'var(--sidebar-text)',
-            fontWeight: activeTab === 'settings' ? 700 : 500,
-            fontSize: '0.925rem',
-            cursor: 'pointer',
-            textAlign: 'left',
-            width: '100%'
-          }}
+            textDecoration: 'none',
+            backgroundColor: isActive ? 'var(--sidebar-active-bg)' : 'transparent',
+            color: isActive ? 'var(--sidebar-active-text)' : 'var(--sidebar-text)',
+            fontWeight: isActive ? 700 : 500,
+            fontSize: '0.885rem',
+            transition: 'all 0.2s ease'
+          })}
         >
-          <Settings size={20} style={{ opacity: activeTab === 'settings' ? 1 : 0.7 }} />
-          <span>Settings</span>
-        </button>
+          {({ isActive }) => (
+            <>
+              <Settings size={19} style={{ opacity: isActive ? 1 : 0.75 }} />
+              <span>Settings</span>
+            </>
+          )}
+        </NavLink>
       </div>
     </aside>
   );

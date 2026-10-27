@@ -1,51 +1,71 @@
 import React, { useState } from 'react';
-import { LogIn, Mail, Lock, Eye, EyeOff, CheckCircle2, AlertCircle, Palette, ArrowRight, ShieldCheck } from 'lucide-react';
-import { authenticateStudent, isValidUniversityEmail } from './authStorage';
+import { useNavigate, Link } from 'react-router-dom';
+import { LogIn, Mail, Lock, Eye, EyeOff, Palette, ArrowRight, ShieldCheck, AlertCircle, CheckCircle2 } from 'lucide-react';
+import { useAuth } from '../../context/AuthContext';
+import { useTheme } from '../../context/ThemeContext';
+import { useToast } from '../../context/ToastContext';
+import { useForm } from '../../hooks/useForm';
+import InputField from '../common/InputField';
+import Button from '../common/Button';
 
-export default function LoginPage({ onLoginSuccess, onSwitchToSignup, theme, setTheme }) {
-  const [identifier, setIdentifier] = useState('');
-  const [password, setPassword] = useState('');
+export default function LoginPage() {
+  const navigate = useNavigate();
+  const { login } = useAuth();
+  const { theme, setTheme, themes } = useTheme();
+  const { showSuccess, showError } = useToast();
+
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(true);
-  const [errorMessage, setErrorMessage] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
+  const [formGlobalError, setFormGlobalError] = useState('');
+
+  // Password Reset Modal State
   const [showForgotPasswordModal, setShowForgotPasswordModal] = useState(false);
   const [forgotEmail, setForgotEmail] = useState('');
   const [forgotSuccess, setForgotSuccess] = useState(false);
-
   const [forgotError, setForgotError] = useState('');
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    setErrorMessage('');
-
-    if (!identifier.trim()) {
-      setErrorMessage('Please enter your University Email or Roll Number.');
-      return;
-    }
-
-    if (identifier.includes('@') && !isValidUniversityEmail(identifier)) {
-      setErrorMessage('Invalid email domain. Only official university email addresses ending with @apex.edu are allowed (Gmail is not accepted).');
-      return;
-    }
-
-    if (!password.trim()) {
-      setErrorMessage('Please enter your account password.');
-      return;
-    }
-
-    setIsLoading(true);
-    setTimeout(() => {
-      try {
-        const user = authenticateStudent(identifier, password);
-        onLoginSuccess(user);
-      } catch (err) {
-        setErrorMessage(err.message || 'Authentication failed.');
-      } finally {
-        setIsLoading(false);
+  // Form Handling with validation strategies
+  const {
+    values,
+    errors,
+    touched,
+    isSubmitting,
+    handleChange,
+    handleBlur,
+    handleSubmit
+  } = useForm({
+    initialValues: {
+      identifier: 'rohit.verma@apex.edu',
+      password: 'password123'
+    },
+    validationRules: {
+      identifier: {
+        required: true,
+        label: 'University Email or Roll Number',
+        validate: (val) => {
+          if (val && val.includes('@') && !val.trim().toLowerCase().endsWith('@apex.edu') && !val.trim().toLowerCase().endsWith('@apex.edu.in')) {
+            return 'Only official university email ending in @apex.edu allowed.';
+          }
+          return '';
+        }
+      },
+      password: {
+        required: true,
+        minLength: 6,
+        label: 'Password'
       }
-    }, 400);
-  };
+    },
+    onSubmit: async (formValues) => {
+      setFormGlobalError('');
+      try {
+        const user = await login(formValues.identifier, formValues.password);
+        showSuccess(`Welcome back, ${user.name}!`);
+        navigate('/dashboard');
+      } catch (err) {
+        setFormGlobalError(err.message || 'Authentication failed. Please verify credentials.');
+      }
+    }
+  });
 
   const handleForgotPasswordSubmit = (e) => {
     e.preventDefault();
@@ -54,20 +74,12 @@ export default function LoginPage({ onLoginSuccess, onSwitchToSignup, theme, set
       setForgotError('Please enter your University Email address.');
       return;
     }
-    if (!isValidUniversityEmail(forgotEmail)) {
+    if (!forgotEmail.trim().toLowerCase().endsWith('@apex.edu')) {
       setForgotError('Only official university email addresses ending with @apex.edu are permitted.');
       return;
     }
     setForgotSuccess(true);
   };
-
-  const themes = [
-    { id: 'light', name: 'Light' },
-    { id: 'dark', name: 'Dark' },
-    { id: 'neon', name: 'Neon' },
-    { id: 'emerald', name: 'Emerald' },
-    { id: 'sunset', name: 'Sunset' }
-  ];
 
   return (
     <div className="auth-wrapper">
@@ -75,17 +87,17 @@ export default function LoginPage({ onLoginSuccess, onSwitchToSignup, theme, set
       <div className="auth-bg-blob auth-blob-1" />
       <div className="auth-bg-blob auth-blob-2" />
 
-      {/* Top Floating Bar for Theme Selection */}
+      {/* Top Floating Bar for Theme Selection via ThemeContext */}
       <div className="auth-top-bar">
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
           <Palette size={16} style={{ color: 'var(--primary)' }} />
           <span style={{ fontSize: '0.8rem', fontWeight: 600, color: 'var(--text-muted)' }}>Theme:</span>
-          <select 
-            value={theme} 
+          <select
+            value={theme}
             onChange={(e) => setTheme(e.target.value)}
             className="auth-theme-select"
           >
-            {themes.map(t => (
+            {themes.map((t) => (
               <option key={t.id} value={t.id}>
                 {t.name}
               </option>
@@ -109,58 +121,44 @@ export default function LoginPage({ onLoginSuccess, onSwitchToSignup, theme, set
             </p>
           </div>
 
-          {/* Error Banner */}
-          {errorMessage && (
+          {/* Global Error Banner */}
+          {formGlobalError && (
             <div className="auth-alert-error">
               <AlertCircle size={18} style={{ flexShrink: 0 }} />
-              <span>{errorMessage}</span>
+              <span>{formGlobalError}</span>
             </div>
           )}
 
-          {/* Login Form */}
+          {/* Form with Reusable Components */}
           <form onSubmit={handleSubmit} className="auth-form">
-            <div className="auth-input-group">
-              <label htmlFor="identifier">Student Email or Roll Number</label>
-              <div className="auth-input-wrapper">
-                <Mail size={18} className="auth-input-icon" />
-                <input
-                  id="identifier"
-                  type="text"
-                  placeholder="e.g. rohit.verma@apex.edu or 25109928"
-                  value={identifier}
-                  onChange={(e) => setIdentifier(e.target.value)}
-                  autoComplete="username"
-                  required
-                />
-              </div>
-            </div>
+            <InputField
+              label="Student Email or Roll Number"
+              name="identifier"
+              placeholder="e.g. rohit.verma@apex.edu or 25109928"
+              value={values.identifier}
+              onChange={handleChange}
+              onBlur={handleBlur}
+              error={errors.identifier}
+              touched={touched.identifier}
+              required
+              icon={Mail}
+              autoComplete="username"
+            />
 
-            <div className="auth-input-group">
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
-                <label htmlFor="password" style={{ margin: 0 }}>Password</label>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setShowForgotPasswordModal(true);
-                    setForgotSuccess(false);
-                    setForgotEmail(identifier.includes('@') ? identifier : '');
-                  }}
-                  className="auth-link-btn"
-                >
-                  Forgot password?
-                </button>
-              </div>
-              <div className="auth-input-wrapper">
-                <Lock size={18} className="auth-input-icon" />
-                <input
-                  id="password"
-                  type={showPassword ? 'text' : 'password'}
-                  placeholder="••••••••"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  autoComplete="current-password"
-                  required
-                />
+            <InputField
+              label="Password"
+              name="password"
+              type={showPassword ? 'text' : 'password'}
+              placeholder="••••••••"
+              value={values.password}
+              onChange={handleChange}
+              onBlur={handleBlur}
+              error={errors.password}
+              touched={touched.password}
+              required
+              icon={Lock}
+              autoComplete="current-password"
+              rightAction={
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
@@ -169,10 +167,10 @@ export default function LoginPage({ onLoginSuccess, onSwitchToSignup, theme, set
                 >
                   {showPassword ? <EyeOff size={17} /> : <Eye size={17} />}
                 </button>
-              </div>
-            </div>
+              }
+            />
 
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: '2px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: '-4px', marginBottom: '14px' }}>
               <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontSize: '0.85rem', color: 'var(--text-muted)' }}>
                 <input
                   type="checkbox"
@@ -182,22 +180,30 @@ export default function LoginPage({ onLoginSuccess, onSwitchToSignup, theme, set
                 />
                 Remember my session
               </label>
+
+              <button
+                type="button"
+                onClick={() => {
+                  setShowForgotPasswordModal(true);
+                  setForgotSuccess(false);
+                  setForgotEmail(values.identifier.includes('@') ? values.identifier : '');
+                }}
+                className="auth-link-btn"
+              >
+                Forgot password?
+              </button>
             </div>
 
-            <button
+            <Button
               type="submit"
-              disabled={isLoading}
-              className="btn-primary auth-submit-btn"
+              variant="primary"
+              size="lg"
+              isLoading={isSubmitting}
+              icon={LogIn}
+              style={{ width: '100%', justifyContent: 'center' }}
             >
-              {isLoading ? (
-                <span>Signing in...</span>
-              ) : (
-                <>
-                  <LogIn size={18} />
-                  <span>Sign In to Portal</span>
-                </>
-              )}
-            </button>
+              Sign In to Portal
+            </Button>
           </form>
 
           {/* Footer Switcher */}
@@ -205,14 +211,10 @@ export default function LoginPage({ onLoginSuccess, onSwitchToSignup, theme, set
             <span className="text-muted" style={{ fontSize: '0.875rem' }}>
               Don't have a student account?
             </span>
-            <button
-              type="button"
-              onClick={onSwitchToSignup}
-              className="auth-switch-link"
-            >
+            <Link to="/signup" className="auth-switch-link">
               <span>Register Now</span>
               <ArrowRight size={15} />
-            </button>
+            </Link>
           </div>
         </div>
       </div>
@@ -289,4 +291,3 @@ export default function LoginPage({ onLoginSuccess, onSwitchToSignup, theme, set
     </div>
   );
 }
-

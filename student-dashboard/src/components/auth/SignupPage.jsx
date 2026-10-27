@@ -1,114 +1,103 @@
 import React, { useState } from 'react';
-import { UserPlus, User, Mail, Lock, Eye, EyeOff, Hash, BookOpen, AlertCircle, ArrowLeft, Palette, CheckCircle2, ShieldCheck } from 'lucide-react';
-import { registerStudent, isValidUniversityEmail } from './authStorage';
+import { useNavigate, Link } from 'react-router-dom';
+import { UserPlus, User, Mail, Lock, Eye, EyeOff, Hash, BookOpen, AlertCircle, ArrowLeft, Palette } from 'lucide-react';
+import { useAuth } from '../../context/AuthContext';
+import { useTheme } from '../../context/ThemeContext';
+import { useToast } from '../../context/ToastContext';
+import { useForm } from '../../hooks/useForm';
+import InputField from '../common/InputField';
+import SelectField from '../common/SelectField';
+import Button from '../common/Button';
 
-export default function SignupPage({ onSignupSuccess, onSwitchToLogin, theme, setTheme }) {
-  const [formData, setFormData] = useState({
-    name: '',
-    rollNumber: '',
-    email: '',
-    department: 'School of Computer Science & Tech',
-    program: 'B.Tech in Artificial Intelligence & Machine Learning',
-    password: '',
-    confirmPassword: '',
-    agreeTerms: true
-  });
+export default function SignupPage() {
+  const navigate = useNavigate();
+  const { signup } = useAuth();
+  const { theme, setTheme, themes } = useTheme();
+  const { showSuccess } = useToast();
 
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [errorMessage, setErrorMessage] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
+  const [formGlobalError, setFormGlobalError] = useState('');
 
   const programs = [
-    { name: 'B.Tech in Artificial Intelligence & Machine Learning', dept: 'School of Computer Science & Tech' },
-    { name: 'B.Tech in Computer Science & Engineering', dept: 'School of Computer Science & Tech' },
-    { name: 'B.Tech in Data Science & Big Data Analytics', dept: 'School of Computing & Informatics' },
-    { name: 'B.Tech in Electronics & Communication', dept: 'School of Electrical & Electronics' },
-    { name: 'B.Tech in Mechanical & Robotics Engineering', dept: 'School of Mechanical Sciences' }
+    { value: 'B.Tech in Artificial Intelligence & Machine Learning', label: 'B.Tech in Artificial Intelligence & Machine Learning', dept: 'School of Computer Science & Tech' },
+    { value: 'B.Tech in Computer Science & Engineering', label: 'B.Tech in Computer Science & Engineering', dept: 'School of Computer Science & Tech' },
+    { value: 'B.Tech in Data Science & Big Data Analytics', label: 'B.Tech in Data Science & Big Data Analytics', dept: 'School of Computing & Informatics' },
+    { value: 'B.Tech in Electronics & Communication', label: 'B.Tech in Electronics & Communication', dept: 'School of Electrical & Electronics' },
+    { value: 'B.Tech in Mechanical & Robotics Engineering', label: 'B.Tech in Mechanical & Robotics Engineering', dept: 'School of Mechanical Sciences' }
   ];
 
-  const handleChange = (e) => {
-    const { name, value, type, checked } = e.target;
-    setFormData(prev => {
-      const updated = {
-        ...prev,
-        [name]: type === 'checkbox' ? checked : value
-      };
-      // If program changes, auto-select corresponding department
-      if (name === 'program') {
-        const found = programs.find(p => p.name === value);
-        if (found) {
-          updated.department = found.dept;
-        }
+  const {
+    values,
+    errors,
+    touched,
+    isSubmitting,
+    handleChange,
+    handleBlur,
+    handleSubmit
+  } = useForm({
+    initialValues: {
+      name: '',
+      rollNumber: '',
+      email: '',
+      program: programs[0].value,
+      password: '',
+      confirmPassword: '',
+      agreeTerms: true
+    },
+    validationRules: {
+      name: {
+        required: true,
+        minLength: 3,
+        label: 'Full Legal Name'
+      },
+      rollNumber: {
+        required: true,
+        minLength: 5,
+        label: 'Roll / Enrollment ID'
+      },
+      email: {
+        required: true,
+        isUniversityEmail: true,
+        label: 'University Email'
+      },
+      password: {
+        required: true,
+        minLength: 6,
+        label: 'Password'
+      },
+      confirmPassword: {
+        required: true,
+        matchField: 'password',
+        matchMessage: 'Passwords do not match.',
+        label: 'Confirm Password'
+      },
+      agreeTerms: {
+        validate: (val) => (!val ? 'You must accept the Academic Honor Code.' : '')
       }
-      return updated;
-    });
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    setErrorMessage('');
-
-    // Validations
-    if (!formData.name.trim()) {
-      setErrorMessage('Please enter your full legal name.');
-      return;
-    }
-    if (!formData.rollNumber.trim()) {
-      setErrorMessage('Please enter your Student Roll Number or Enrollment ID.');
-      return;
-    }
-    if (!formData.email.trim() || !formData.email.includes('@')) {
-      setErrorMessage('Please enter a valid university email address.');
-      return;
-    }
-    if (!isValidUniversityEmail(formData.email)) {
-      setErrorMessage('Invalid email domain. Only official university email addresses ending with @apex.edu are allowed. Personal emails like Gmail are not permitted.');
-      return;
-    }
-    if (formData.password.length < 6) {
-      setErrorMessage('Password must be at least 6 characters long.');
-      return;
-    }
-    if (formData.password !== formData.confirmPassword) {
-      setErrorMessage('Passwords do not match. Please re-enter.');
-      return;
-    }
-    if (!formData.agreeTerms) {
-      setErrorMessage('You must accept the Apex University Academic Honor Code.');
-      return;
-    }
-
-    setIsLoading(true);
-    setTimeout(() => {
+    },
+    onSubmit: async (formValues) => {
+      setFormGlobalError('');
       try {
-        const newStudent = registerStudent({
-          name: formData.name.trim(),
-          rollNumber: formData.rollNumber.trim(),
-          email: formData.email.trim(),
-          department: formData.department,
-          program: formData.program,
-          password: formData.password.trim(),
-          section: 'U25-' + formData.rollNumber.trim().slice(-2) || 'U25-A1',
+        const foundProg = programs.find((p) => p.value === formValues.program);
+        const newUser = await signup({
+          name: formValues.name.trim(),
+          rollNumber: formValues.rollNumber.trim(),
+          email: formValues.email.trim(),
+          department: foundProg ? foundProg.dept : 'School of Computer Science & Tech',
+          program: formValues.program,
+          password: formValues.password.trim(),
+          section: 'U25-' + formValues.rollNumber.trim().slice(-2) || 'U25-A1',
           mentor: 'Dr. S. K. Narayan'
         });
 
-        onSignupSuccess(newStudent);
+        showSuccess(`Account registered successfully for ${newUser.name}!`);
+        navigate('/dashboard');
       } catch (err) {
-        setErrorMessage(err.message || 'Failed to register account.');
-      } finally {
-        setIsLoading(false);
+        setFormGlobalError(err.message || 'Failed to register account.');
       }
-    }, 450);
-  };
-
-  const themes = [
-    { id: 'light', name: 'Light' },
-    { id: 'dark', name: 'Dark' },
-    { id: 'neon', name: 'Neon' },
-    { id: 'emerald', name: 'Emerald' },
-    { id: 'sunset', name: 'Sunset' }
-  ];
+    }
+  });
 
   return (
     <div className="auth-wrapper">
@@ -121,12 +110,12 @@ export default function SignupPage({ onSignupSuccess, onSwitchToLogin, theme, se
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
           <Palette size={16} style={{ color: 'var(--primary)' }} />
           <span style={{ fontSize: '0.8rem', fontWeight: 600, color: 'var(--text-muted)' }}>Theme:</span>
-          <select 
-            value={theme} 
+          <select
+            value={theme}
             onChange={(e) => setTheme(e.target.value)}
             className="auth-theme-select"
           >
-            {themes.map(t => (
+            {themes.map((t) => (
               <option key={t.id} value={t.id}>
                 {t.name}
               </option>
@@ -150,104 +139,83 @@ export default function SignupPage({ onSignupSuccess, onSwitchToLogin, theme, se
             </p>
           </div>
 
-          {/* Error Banner */}
-          {errorMessage && (
+          {/* Global Error Banner */}
+          {formGlobalError && (
             <div className="auth-alert-error">
               <AlertCircle size={18} style={{ flexShrink: 0 }} />
-              <span>{errorMessage}</span>
+              <span>{formGlobalError}</span>
             </div>
           )}
 
-          {/* Registration Form */}
+          {/* Form */}
           <form onSubmit={handleSubmit} className="auth-form">
-            {/* Name and Roll in two columns */}
             <div className="auth-grid-2">
-              <div className="auth-input-group">
-                <label htmlFor="name">Full Name</label>
-                <div className="auth-input-wrapper">
-                  <User size={18} className="auth-input-icon" />
-                  <input
-                    id="name"
-                    name="name"
-                    type="text"
-                    placeholder="e.g. Priya Sharma"
-                    value={formData.name}
-                    onChange={handleChange}
-                    required
-                  />
-                </div>
-              </div>
+              <InputField
+                label="Full Name"
+                name="name"
+                placeholder="e.g. Priya Sharma"
+                value={values.name}
+                onChange={handleChange}
+                onBlur={handleBlur}
+                error={errors.name}
+                touched={touched.name}
+                required
+                icon={User}
+              />
 
-              <div className="auth-input-group">
-                <label htmlFor="rollNumber">Roll / Enrollment No.</label>
-                <div className="auth-input-wrapper">
-                  <Hash size={18} className="auth-input-icon" />
-                  <input
-                    id="rollNumber"
-                    name="rollNumber"
-                    type="text"
-                    placeholder="e.g. 25108892"
-                    value={formData.rollNumber}
-                    onChange={handleChange}
-                    required
-                  />
-                </div>
-              </div>
+              <InputField
+                label="Roll / Enrollment No."
+                name="rollNumber"
+                placeholder="e.g. 25108892"
+                value={values.rollNumber}
+                onChange={handleChange}
+                onBlur={handleBlur}
+                error={errors.rollNumber}
+                touched={touched.rollNumber}
+                required
+                icon={Hash}
+              />
             </div>
 
-            {/* Email */}
-            <div className="auth-input-group">
-              <label htmlFor="email">University / Official Email</label>
-              <div className="auth-input-wrapper">
-                <Mail size={18} className="auth-input-icon" />
-                <input
-                  id="email"
-                  name="email"
-                  type="email"
-                  placeholder="e.g. priya.sharma@apex.edu"
-                  value={formData.email}
-                  onChange={handleChange}
-                  required
-                />
-              </div>
-            </div>
+            <InputField
+              label="University / Official Email"
+              name="email"
+              type="email"
+              placeholder="e.g. priya.sharma@apex.edu"
+              value={values.email}
+              onChange={handleChange}
+              onBlur={handleBlur}
+              error={errors.email}
+              touched={touched.email}
+              required
+              icon={Mail}
+              helperText="Only official email ending in @apex.edu allowed."
+            />
 
-            {/* Academic Program */}
-            <div className="auth-input-group">
-              <label htmlFor="program">Degree & Major</label>
-              <div className="auth-input-wrapper">
-                <BookOpen size={18} className="auth-input-icon" />
-                <select
-                  id="program"
-                  name="program"
-                  value={formData.program}
-                  onChange={handleChange}
-                  className="auth-select"
-                >
-                  {programs.map(p => (
-                    <option key={p.name} value={p.name}>
-                      {p.name}
-                    </option>
-                  ))}
-                </select>
-              </div>
-            </div>
+            <SelectField
+              label="Degree & Major"
+              name="program"
+              value={values.program}
+              onChange={handleChange}
+              onBlur={handleBlur}
+              options={programs}
+              icon={BookOpen}
+            />
 
-            {/* Passwords in two columns */}
             <div className="auth-grid-2">
-              <div className="auth-input-group">
-                <label htmlFor="signup-password">Password</label>
-                <div className="auth-input-wrapper">
-                  <Lock size={18} className="auth-input-icon" />
-                  <input
-                    id="signup-password"
-                    name="password"
-                    type={showPassword ? 'text' : 'password'}
-                    placeholder="Min 6 characters"
-                    value={formData.password}
-                    onChange={handleChange}
-                    required
-                  />
+              <InputField
+                label="Password"
+                name="password"
+                type={showPassword ? 'text' : 'password'}
+                placeholder="Min 6 characters"
+                value={values.password}
+                onChange={handleChange}
+                onBlur={handleBlur}
+                error={errors.password}
+                touched={touched.password}
+                required
+                icon={Lock}
+                rightAction={
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
@@ -255,22 +223,22 @@ export default function SignupPage({ onSignupSuccess, onSwitchToLogin, theme, se
                   >
                     {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
                   </button>
-                </div>
-              </div>
+                }
+              />
 
-              <div className="auth-input-group">
-                <label htmlFor="confirmPassword">Confirm Password</label>
-                <div className="auth-input-wrapper">
-                  <Lock size={18} className="auth-input-icon" />
-                  <input
-                    id="confirmPassword"
-                    name="confirmPassword"
-                    type={showConfirmPassword ? 'text' : 'password'}
-                    placeholder="Repeat password"
-                    value={formData.confirmPassword}
-                    onChange={handleChange}
-                    required
-                  />
+              <InputField
+                label="Confirm Password"
+                name="confirmPassword"
+                type={showConfirmPassword ? 'text' : 'password'}
+                placeholder="Repeat password"
+                value={values.confirmPassword}
+                onChange={handleChange}
+                onBlur={handleBlur}
+                error={errors.confirmPassword}
+                touched={touched.confirmPassword}
+                required
+                icon={Lock}
+                rightAction={
                   <button
                     type="button"
                     onClick={() => setShowConfirmPassword(!showConfirmPassword)}
@@ -278,17 +246,16 @@ export default function SignupPage({ onSignupSuccess, onSwitchToLogin, theme, se
                   >
                     {showConfirmPassword ? <EyeOff size={16} /> : <Eye size={16} />}
                   </button>
-                </div>
-              </div>
+                }
+              />
             </div>
 
-            {/* Terms checkbox */}
-            <div style={{ marginTop: '2px' }}>
+            <div style={{ marginTop: '2px', marginBottom: '8px' }}>
               <label style={{ display: 'flex', alignItems: 'flex-start', gap: '8px', cursor: 'pointer', fontSize: '0.825rem', color: 'var(--text-muted)' }}>
                 <input
                   type="checkbox"
                   name="agreeTerms"
-                  checked={formData.agreeTerms}
+                  checked={values.agreeTerms}
                   onChange={handleChange}
                   style={{ accentColor: 'var(--primary)', marginTop: '2px', cursor: 'pointer' }}
                 />
@@ -296,23 +263,23 @@ export default function SignupPage({ onSignupSuccess, onSwitchToLogin, theme, se
                   I agree to the <strong>Apex University Academic Honor Code</strong> and agree to abide by portal terms.
                 </span>
               </label>
+              {touched.agreeTerms && errors.agreeTerms && (
+                <div style={{ color: '#ef4444', fontSize: '0.78rem', marginTop: '4px' }}>
+                  {errors.agreeTerms}
+                </div>
+              )}
             </div>
 
-            <button
+            <Button
               type="submit"
-              disabled={isLoading}
-              className="btn-primary auth-submit-btn"
-              style={{ marginTop: '10px' }}
+              variant="primary"
+              size="lg"
+              isLoading={isSubmitting}
+              icon={UserPlus}
+              style={{ width: '100%', justifyContent: 'center', marginTop: '10px' }}
             >
-              {isLoading ? (
-                <span>Registering student profile...</span>
-              ) : (
-                <>
-                  <UserPlus size={18} />
-                  <span>Create Student Account</span>
-                </>
-              )}
-            </button>
+              Create Student Account
+            </Button>
           </form>
 
           {/* Footer Switcher */}
@@ -320,18 +287,13 @@ export default function SignupPage({ onSignupSuccess, onSwitchToLogin, theme, se
             <span className="text-muted" style={{ fontSize: '0.875rem' }}>
               Already registered your student account?
             </span>
-            <button
-              type="button"
-              onClick={onSwitchToLogin}
-              className="auth-switch-link"
-            >
+            <Link to="/login" className="auth-switch-link">
               <ArrowLeft size={15} />
               <span>Back to Sign In</span>
-            </button>
+            </Link>
           </div>
         </div>
       </div>
     </div>
   );
 }
-

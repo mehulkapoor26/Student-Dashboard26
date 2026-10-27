@@ -577,3 +577,29 @@ body {
   background-color: var(--bg-card);
 }
 
+
+/* Toast animation */
+@keyframes slideInToast {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.reusable-btn:hover:not(:disabled) {
+  filter: brightness(1.08);
+  transform: translateY(-1px);
+}
+
+.reusable-btn:active:not(:disabled) {
+  transform: translateY(1px);
+}

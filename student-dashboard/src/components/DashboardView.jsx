@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 import { 
   Sparkles, 
   ArrowRight, 
@@ -12,8 +14,17 @@ import {
   ExternalLink
 } from 'lucide-react';
 
-export default function DashboardView({ setActiveTab, currentUser }) {
+export default function DashboardView({ setActiveTab, currentUser: propUser }) {
+  const navigate = useNavigate();
+  const { currentUser: authUser } = useAuth();
+  const currentUser = propUser || authUser;
+
   const [selectedNoteTag, setSelectedNoteTag] = useState('All');
+
+  const goToRoute = (tab) => {
+    if (setActiveTab) setActiveTab(tab);
+    navigate(`/${tab}`);
+  };
 
   const studentName = currentUser?.name || 'Rohit Verma';
   const studentRoll = currentUser?.rollNumber || '25109928';
@@ -123,7 +134,7 @@ export default function DashboardView({ setActiveTab, currentUser }) {
                 </div>
 
                 <button 
-                  onClick={() => setActiveTab('my-info')}
+                  onClick={() => goToRoute('my-info')}
                   style={{
                     background: 'none',
                     border: 'none',
@@ -220,7 +231,7 @@ export default function DashboardView({ setActiveTab, currentUser }) {
           </div>
 
           <button 
-            onClick={() => setActiveTab('attendance')}
+            onClick={() => goToRoute('attendance')}
             style={{
               width: '100%',
               background: 'none',

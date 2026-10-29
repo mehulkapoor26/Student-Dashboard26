@@ -1,23 +1,23 @@
 import React, { useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { useToast } from '../../context/ToastContext';
-import { 
-  User, 
-  BookOpen, 
-  Phone, 
-  MapPin, 
-  Award, 
-  ShieldCheck, 
-  Mail, 
-  Calendar, 
-  Droplets, 
-  Globe, 
-  Fingerprint, 
-  GraduationCap, 
-  Edit3, 
-  Save, 
-  X, 
-  CheckCircle2, 
+import {
+  User,
+  BookOpen,
+  Phone,
+  MapPin,
+  Award,
+  ShieldCheck,
+  Mail,
+  Calendar,
+  Droplets,
+  Globe,
+  Fingerprint,
+  GraduationCap,
+  Edit3,
+  Save,
+  X,
+  CheckCircle2,
   AlertCircle,
   RotateCcw
 } from 'lucide-react';
@@ -49,8 +49,8 @@ export default function MyInfoView({ currentUser: propUser, onUpdateUser: propUp
     aadhaar: currentUser?.aadhaar || 'XXXX-XXXX-8921',
     mobile: currentUser?.mobile || '+91 98765 43210',
     address: currentUser?.address || 'House No. 142, Sector 15, Chandigarh, UT 160015',
-    guardianName: currentUser?.guardianName || 'Mr. Suresh Verma',
-    guardianMobile: currentUser?.guardianMobile || '+91 98123 76543',
+    guardianName: currentUser?.guardianName || 'Mr. Keshav Sharma',
+    guardianMobile: currentUser?.guardianMobile || '+91 80591 37819',
     semester: currentUser?.semester || 'Semester 3 (Year 2)',
     cgpa: currentUser?.cgpa || '9.35 / 10.0',
     credits: currentUser?.credits || '48 Credits'
@@ -111,7 +111,7 @@ export default function MyInfoView({ currentUser: propUser, onUpdateUser: propUp
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
-      
+
       {/* Success Notification Alert */}
       {saveSuccess && (
         <div style={{
@@ -130,7 +130,7 @@ export default function MyInfoView({ currentUser: propUser, onUpdateUser: propUp
             <CheckCircle2 size={18} />
             <span>Profile information updated successfully! Changes saved to your student record.</span>
           </div>
-          <button 
+          <button
             onClick={() => setSaveSuccess(false)}
             style={{ background: 'none', border: 'none', color: '#10b981', cursor: 'pointer', padding: '2px' }}
           >
@@ -170,9 +170,9 @@ export default function MyInfoView({ currentUser: propUser, onUpdateUser: propUp
             flexShrink: 0,
             boxShadow: '0 4px 14px rgba(0,0,0,0.1)'
           }}>
-            <img 
-              src={formData.avatarUrl} 
-              alt={formData.name} 
+            <img
+              src={formData.avatarUrl}
+              alt={formData.name}
               style={{ width: '100%', height: '100%', objectFit: 'cover' }}
             />
           </div>
@@ -228,7 +228,7 @@ export default function MyInfoView({ currentUser: propUser, onUpdateUser: propUp
       {/* Main Information View or Edit Form */}
       <form onSubmit={handleFormSubmit}>
         <div className="dashboard-card" style={{ display: 'flex', flexDirection: 'column', gap: '28px' }}>
-          
+
           {/* Section 1: Personal Details */}
           <div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '16px', borderBottom: '1px solid var(--border-color)', paddingBottom: '10px' }}>

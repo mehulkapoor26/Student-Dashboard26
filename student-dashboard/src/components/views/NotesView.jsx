@@ -3,7 +3,6 @@ import {
   Folder, 
   FileText, 
   Download, 
-  Upload, 
   Search, 
   Sparkles, 
   BookOpen, 
@@ -22,7 +21,6 @@ export default function NotesView() {
   const [selectedTag, setSelectedTag] = useState('All');
   const [selectedCategory, setSelectedCategory] = useState('All Types');
   const [searchTerm, setSearchTerm] = useState('');
-  const [showUploadModal, setShowUploadModal] = useState(false);
   const [bookmarkedIds, setBookmarkedIds] = useState([1, 4]);
 
   const [notes, setNotes] = useState([
@@ -36,7 +34,6 @@ export default function NotesView() {
       date: '14 Sep 2026', 
       size: '1.2 MB', 
       downloads: 142,
-      rating: '4.9',
       fileType: 'PDF',
       topics: ['1NF, 2NF, 3NF Definitions', 'Boyce-Codd Normal Form (BCNF)', 'Lossless Join Decomposition', 'Functional Dependency Rules']
     },
@@ -50,7 +47,6 @@ export default function NotesView() {
       date: '12 Sep 2026', 
       size: '3.4 MB', 
       downloads: 89,
-      rating: '4.8',
       fileType: 'PDF',
       topics: ['Creational & Structural Patterns', 'Singleton & Factory Pattern', 'Observer & Strategy Pattern', 'SOLID Design Principles']
     },
@@ -64,7 +60,6 @@ export default function NotesView() {
       date: '08 Sep 2026', 
       size: '2.1 MB', 
       downloads: 210,
-      rating: '4.9',
       fileType: 'PDF',
       topics: ['Graph Theory Algorithms', 'Combinatorics & Logic', 'Recurrence Relations', 'Tree Traversal Algorithms']
     },
@@ -78,7 +73,6 @@ export default function NotesView() {
       date: '16 Sep 2026', 
       size: '4.8 MB', 
       downloads: 55,
-      rating: '5.0',
       fileType: 'PDF',
       topics: ['DOM Manipulation', 'React Hooks & State', 'CSS Flexbox & Grid', 'Responsive Web Design']
     },
@@ -92,7 +86,6 @@ export default function NotesView() {
       date: '05 Sep 2026', 
       size: '1.8 MB', 
       downloads: 118,
-      rating: '4.7',
       fileType: 'PDF',
       topics: ['Set Operations', 'Propositional Logic', 'Mathematical Induction', 'Relations & Functions']
     },
@@ -106,7 +99,6 @@ export default function NotesView() {
       date: '01 Sep 2026', 
       size: '950 KB', 
       downloads: 320,
-      rating: '4.9',
       fileType: 'PDF',
       topics: ['WINDOW Functions (ROW_NUMBER, RANK)', 'Subqueries & CTEs', 'B-Tree & Hash Indexing', 'Query Execution Plan Analysis']
     }
@@ -162,13 +154,6 @@ export default function NotesView() {
           </div>
         </div>
 
-        <button 
-          onClick={() => setShowUploadModal(true)}
-          className="btn-primary"
-          style={{ gap: '8px', padding: '10px 18px', fontSize: '0.875rem' }}
-        >
-          <Upload size={16} /> Upload Resource
-        </button>
       </div>
 
       {/* Top 3 Metric Stat Cards */}
@@ -186,12 +171,12 @@ export default function NotesView() {
 
         <div className="dashboard-card" style={{ borderLeft: '4px solid #f59e0b', display: 'flex', alignItems: 'center', gap: '16px' }}>
           <div style={{ width: '42px', height: '42px', borderRadius: '10px', backgroundColor: 'rgba(245, 158, 11, 0.12)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#f59e0b' }}>
-            <Star size={22} />
+            <Download size={22} />
           </div>
           <div>
-            <span style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase' }}>Highest Rated Sheet</span>
-            <div style={{ fontSize: '1.1rem', fontWeight: 800, color: 'var(--text-heading)', marginTop: '2px' }}>GenAI Architecture</div>
-            <span style={{ fontSize: '0.75rem', fontWeight: 700, color: '#f59e0b' }}>★ 5.0 Rating • 55 Downloads</span>
+            <span style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase' }}>Most Downloaded Sheet</span>
+            <div style={{ fontSize: '1.1rem', fontWeight: 800, color: 'var(--text-heading)', marginTop: '2px' }}>SQL Complex Queries</div>
+            <span style={{ fontSize: '0.75rem', fontWeight: 700, color: '#f59e0b' }}>320 Total Downloads</span>
           </div>
         </div>
 
@@ -200,7 +185,7 @@ export default function NotesView() {
             <Sparkles size={22} />
           </div>
           <div>
-            <span style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase' }}>Recent Upload</span>
+            <span style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase' }}>Recent Resource</span>
             <div style={{ fontSize: '1.1rem', fontWeight: 800, color: 'var(--text-heading)', marginTop: '2px' }}>DBMS Normalization</div>
             <span style={{ fontSize: '0.75rem', fontWeight: 700, color: '#10b981' }}>14 Sep 2026 • Prof. Sharma</span>
           </div>
@@ -368,11 +353,9 @@ export default function NotesView() {
                 </div>
 
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.75rem', color: '#f59e0b', fontWeight: 700 }}>
-                    <Star size={13} fill="#f59e0b" />
-                    <span>{n.rating}</span>
-                    <span style={{ color: 'var(--text-muted)', fontWeight: 500 }}>({n.downloads} downloads)</span>
-                  </div>
+                  <span style={{ fontSize: '0.775rem', color: 'var(--text-muted)', fontWeight: 500 }}>
+                    {n.downloads} downloads
+                  </span>
 
                   <button 
                     className="btn-primary"
@@ -388,72 +371,7 @@ export default function NotesView() {
         })}
       </div>
 
-      {/* Upload Resource Modal */}
-      {showUploadModal && (
-        <div style={{
-          position: 'fixed',
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          backgroundColor: 'rgba(0,0,0,0.65)',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          zIndex: 1000,
-          padding: '20px'
-        }}>
-          <div className="dashboard-card" style={{ width: '100%', maxWidth: '480px', backgroundColor: 'var(--bg-card)', padding: '24px' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-              <h3 className="heading-md" style={{ margin: 0 }}>Upload Course Resource</h3>
-              <button onClick={() => setShowUploadModal(false)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-muted)' }}>
-                <X size={20} />
-              </button>
-            </div>
-            
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '14px', marginBottom: '20px' }}>
-              <div>
-                <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 700, color: 'var(--text-muted)', marginBottom: '4px' }}>Resource Title</label>
-                <input type="text" placeholder="e.g. Unit 3 DBMS Normalization Notes" style={{ width: '100%', padding: '8px 12px', borderRadius: '8px', border: '1px solid var(--border-color)', backgroundColor: 'var(--bg-card)', color: 'var(--text-main)', fontSize: '0.85rem' }} />
-              </div>
 
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
-                <div>
-                  <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 700, color: 'var(--text-muted)', marginBottom: '4px' }}>Subject</label>
-                  <select style={{ width: '100%', padding: '8px 12px', borderRadius: '8px', border: '1px solid var(--border-color)', backgroundColor: 'var(--bg-card)', color: 'var(--text-main)', fontSize: '0.85rem' }}>
-                    <option>DBMS</option>
-                    <option>Discrete Structures</option>
-                    <option>OOPS</option>
-                    <option>FEE</option>
-                  </select>
-                </div>
-                <div>
-                  <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 700, color: 'var(--text-muted)', marginBottom: '4px' }}>Category</label>
-                  <select style={{ width: '100%', padding: '8px 12px', borderRadius: '8px', border: '1px solid var(--border-color)', backgroundColor: 'var(--bg-card)', color: 'var(--text-main)', fontSize: '0.85rem' }}>
-                    <option>Lecture Notes</option>
-                    <option>Lab Manual</option>
-                    <option>Question Bank</option>
-                    <option>Cheatsheet</option>
-                  </select>
-                </div>
-              </div>
-
-              <div style={{ border: '2px dashed var(--border-color)', borderRadius: '12px', padding: '24px', textAlign: 'center', cursor: 'pointer', backgroundColor: 'var(--bg-subtle)' }}>
-                <Upload size={28} style={{ color: 'var(--primary)', marginBottom: '6px' }} />
-                <p style={{ fontWeight: 700, fontSize: '0.85rem', margin: 0 }}>Click or drag PDF / DOCX file</p>
-                <span className="text-muted" style={{ fontSize: '0.725rem' }}>Max file size: 25MB</span>
-              </div>
-            </div>
-
-            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px' }}>
-              <button className="btn-secondary" onClick={() => setShowUploadModal(false)}>Cancel</button>
-              <button className="btn-primary" onClick={() => { setShowUploadModal(false); }}>
-                Submit Resource
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
 
     </div>
   );

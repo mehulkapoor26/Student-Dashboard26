@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
-import { 
-  Calendar as CalendarIcon, 
-  Clock, 
-  MapPin, 
-  FileText, 
-  Download, 
+import {
+  Calendar as CalendarIcon,
+  Clock,
+  MapPin,
+  FileText,
+  Download,
   Sparkles,
   BellRing,
   BookOpen,
@@ -17,51 +17,51 @@ import {
 
 export default function CalendarView() {
   const [currentMonth, setCurrentMonth] = useState('September 2026');
-  
+
   const events = [
-    { 
-      id: 1, 
-      date: '12 Sep 2026', 
+    {
+      id: 1,
+      date: '12 Sep 2026',
       dayNum: 12,
       time: '11:59 PM',
-      title: 'DBMS Assignment 3 Submission', 
-      type: 'Assignment', 
+      title: 'DBMS Assignment 3 Submission',
+      type: 'Assignment',
       location: 'Online Portal',
       status: 'Submitted',
       color: '#ef4444',
       actionText: 'View Submission'
     },
-    { 
-      id: 2, 
-      date: '17 Sep 2026', 
+    {
+      id: 2,
+      date: '17 Sep 2026',
       dayNum: 17,
       time: '02:00 PM - 04:00 PM',
-      title: 'Guest Lecture: GenAI & LLM Architecture', 
-      type: 'Event', 
+      title: 'Guest Lecture: GenAI & LLM Architecture',
+      type: 'Event',
       location: 'Auditorium Hall B',
       status: 'Tomorrow',
       color: '#3b82f6',
       actionText: 'Add to Calendar'
     },
-    { 
-      id: 3, 
-      date: '25 Sep 2026', 
+    {
+      id: 3,
+      date: '25 Sep 2026',
       dayNum: 25,
       time: '09:30 AM - 12:30 PM',
-      title: 'Mid-Term Examinations Begin', 
-      type: 'Exam', 
+      title: 'Mid-Term Examinations Begin',
+      type: 'Exam',
       location: 'Examination Block LH-501',
       status: 'In 9 days',
       color: '#ec4899',
-      actionText: 'Download Hall Ticket'
+      actionText: 'View Circular'
     },
-    { 
-      id: 4, 
-      date: '02 Oct 2026', 
+    {
+      id: 4,
+      date: '02 Oct 2026',
       dayNum: 2,
       time: 'Full Day',
-      title: 'Gandhi Jayanti Holiday', 
-      type: 'Holiday', 
+      title: 'Gandhi Jayanti Holiday',
+      type: 'Holiday',
       location: 'Campus Closed',
       status: 'Upcoming',
       color: '#10b981',
@@ -73,25 +73,25 @@ export default function CalendarView() {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
-      
+
       {/* Calendar Header */}
-      <div className="dashboard-card" style={{ 
-        display: 'flex', 
-        justify: 'space-between', 
-        alignItems: 'center', 
-        flexWrap: 'wrap', 
+      <div className="dashboard-card" style={{
+        display: 'flex',
+        justify: 'space-between',
+        alignItems: 'center',
+        flexWrap: 'wrap',
         gap: '16px',
         background: 'linear-gradient(135deg, var(--bg-card) 0%, var(--bg-subtle) 100%)',
         borderLeft: '5px solid var(--primary)'
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
-          <div style={{ 
-            width: '46px', 
-            height: '46px', 
-            borderRadius: '12px', 
-            backgroundColor: 'var(--primary-light)', 
-            display: 'flex', 
-            alignItems: 'center', 
+          <div style={{
+            width: '46px',
+            height: '46px',
+            borderRadius: '12px',
+            backgroundColor: 'var(--primary-light)',
+            display: 'flex',
+            alignItems: 'center',
             justifyContent: 'center',
             color: 'var(--primary)'
           }}>
@@ -106,9 +106,9 @@ export default function CalendarView() {
         </div>
 
         <div>
-          <span style={{ 
-            fontWeight: 800, 
-            fontSize: '0.95rem', 
+          <span style={{
+            fontWeight: 800,
+            fontSize: '0.95rem',
             color: 'var(--primary)',
             backgroundColor: 'var(--primary-light)',
             padding: '8px 16px',
@@ -139,7 +139,7 @@ export default function CalendarView() {
             <Sparkles size={22} />
           </div>
           <div>
-            <span style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase' }}>Next Campus Event</span>
+            <span style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase' }}>Next Lab</span>
             <div style={{ fontSize: '1rem', fontWeight: 800, color: 'var(--text-heading)', marginTop: '2px' }}>GenAI & LLM Architecture</div>
             <span style={{ fontSize: '0.75rem', fontWeight: 700, color: '#3b82f6' }}>17 Sep • Tomorrow (02:00 PM)</span>
           </div>
@@ -159,7 +159,7 @@ export default function CalendarView() {
 
       {/* Main Full-Width Schedule List */}
       <div className="dashboard-card" style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-        
+
         {/* Header Row */}
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '12px' }}>
           <h3 className="heading-md" style={{ margin: 0, fontSize: '1.1rem', display: 'flex', alignItems: 'center', gap: '8px' }}>
@@ -170,8 +170,8 @@ export default function CalendarView() {
         {/* Timeline Events List */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
           {events.map((e) => (
-            <div 
-              key={e.id} 
+            <div
+              key={e.id}
               style={{
                 display: 'flex',
                 alignItems: 'center',
@@ -210,22 +210,22 @@ export default function CalendarView() {
 
                 <div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                    <span style={{ 
-                      fontSize: '0.7rem', 
-                      fontWeight: 800, 
-                      color: e.color, 
+                    <span style={{
+                      fontSize: '0.7rem',
+                      fontWeight: 800,
+                      color: e.color,
                       backgroundColor: `${e.color}15`,
                       padding: '2px 8px',
                       borderRadius: '6px',
-                      textTransform: 'uppercase' 
+                      textTransform: 'uppercase'
                     }}>
                       {e.type}
                     </span>
 
-                    <span style={{ 
-                      fontSize: '0.725rem', 
-                      fontWeight: 700, 
-                      color: e.status === 'Tomorrow' ? '#f59e0b' : e.status === 'In 9 days' ? '#ec4899' : e.status === 'Submitted' ? '#10b981' : 'var(--text-muted)' 
+                    <span style={{
+                      fontSize: '0.725rem',
+                      fontWeight: 700,
+                      color: e.status === 'Tomorrow' ? '#f59e0b' : e.status === 'In 9 days' ? '#ec4899' : e.status === 'Submitted' ? '#10b981' : 'var(--text-muted)'
                     }}>
                       • {e.status}
                     </span>
@@ -249,14 +249,14 @@ export default function CalendarView() {
 
               {/* Action Button */}
               <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                <button 
-                  className="btn-secondary" 
-                  style={{ 
-                    fontSize: '0.8rem', 
-                    padding: '8px 14px', 
-                    borderRadius: '8px', 
+                <button
+                  className="btn-secondary"
+                  style={{
+                    fontSize: '0.8rem',
+                    padding: '8px 14px',
+                    borderRadius: '8px',
                     gap: '6px',
-                    fontWeight: 700 
+                    fontWeight: 700
                   }}
                 >
                   {e.actionText} <ExternalLink size={13} />
@@ -268,11 +268,11 @@ export default function CalendarView() {
       </div>
 
       {/* Bottom Download & Announcement Banner */}
-      <div className="dashboard-card" style={{ 
-        display: 'flex', 
-        justify: 'space-between', 
-        alignItems: 'center', 
-        flexWrap: 'wrap', 
+      <div className="dashboard-card" style={{
+        display: 'flex',
+        justify: 'space-between',
+        alignItems: 'center',
+        flexWrap: 'wrap',
         gap: '16px',
         background: 'linear-gradient(135deg, rgba(59, 130, 246, 0.06) 0%, rgba(37, 99, 235, 0.02) 100%)',
         border: '1px solid rgba(59, 130, 246, 0.2)'

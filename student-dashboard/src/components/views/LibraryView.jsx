@@ -1,17 +1,17 @@
 import React, { useState } from 'react';
-import { 
-  BookOpen, 
-  Search, 
-  AlertCircle, 
-  RefreshCw, 
-  CheckCircle2, 
-  Bookmark, 
-  Clock, 
-  FileText, 
-  Sparkles, 
-  Book, 
-  Download, 
-  Eye, 
+import {
+  BookOpen,
+  Search,
+  AlertCircle,
+  RefreshCw,
+  CheckCircle2,
+  Bookmark,
+  Clock,
+  FileText,
+  Sparkles,
+  Book,
+  Download,
+  Eye,
   X,
   CreditCard,
   History
@@ -23,28 +23,28 @@ export default function LibraryView() {
   const [selectedEbook, setSelectedEbook] = useState(null);
 
   const [borrowedBooks, setBorrowedBooks] = useState([
-    { 
-      id: 1, 
-      title: 'Generative Deep Learning', 
-      author: 'David Foster', 
-      accession: 'LIB-88912', 
+    {
+      id: 1,
+      title: 'Generative Deep Learning',
+      author: 'David Foster',
+      accession: 'LIB-88912',
       category: 'Computer Science',
-      issueDate: '24 Aug 2026', 
-      dueDate: '09 Sep 2026', 
-      daysLeft: 2, 
+      issueDate: '24 Aug 2026',
+      dueDate: '09 Sep 2026',
+      daysLeft: 2,
       totalDays: 14,
       isRenewed: false,
       color: '#3b82f6'
     },
-    { 
-      id: 2, 
-      title: 'Introduction to Algorithms (CLRS)', 
-      author: 'Cormen, Leiserson, Rivest, Stein', 
-      accession: 'LIB-45091', 
+    {
+      id: 2,
+      title: 'Introduction to Algorithms (CLRS)',
+      author: 'Cormen, Leiserson, Rivest, Stein',
+      accession: 'LIB-45091',
       category: 'Data Structures',
-      issueDate: '12 Aug 2026', 
-      dueDate: '19 Sep 2026', 
-      daysLeft: 12, 
+      issueDate: '12 Aug 2026',
+      dueDate: '19 Sep 2026',
+      daysLeft: 12,
       totalDays: 28,
       isRenewed: false,
       color: '#ec4899'
@@ -209,38 +209,38 @@ export default function LibraryView() {
     }));
   };
 
-  const filteredIssuedBooks = borrowedBooks.filter(b => 
-    b.title.toLowerCase().includes(searchTerm.toLowerCase()) || 
+  const filteredIssuedBooks = borrowedBooks.filter(b =>
+    b.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
     b.author.toLowerCase().includes(searchTerm.toLowerCase()) ||
     b.accession.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  const filteredEbooks = ebooks.filter(e => 
-    e.title.toLowerCase().includes(searchTerm.toLowerCase()) || 
+  const filteredEbooks = ebooks.filter(e =>
+    e.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
     e.author.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
-      
+
       {/* Header Banner */}
-      <div className="dashboard-card" style={{ 
-        display: 'flex', 
-        justify: 'space-between', 
-        alignItems: 'center', 
-        flexWrap: 'wrap', 
+      <div className="dashboard-card" style={{
+        display: 'flex',
+        justify: 'space-between',
+        alignItems: 'center',
+        flexWrap: 'wrap',
         gap: '16px',
         background: 'linear-gradient(135deg, var(--bg-card) 0%, var(--bg-subtle) 100%)',
         borderLeft: '5px solid var(--primary)'
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
-          <div style={{ 
-            width: '46px', 
-            height: '46px', 
-            borderRadius: '12px', 
-            backgroundColor: 'var(--primary-light)', 
-            display: 'flex', 
-            alignItems: 'center', 
+          <div style={{
+            width: '46px',
+            height: '46px',
+            borderRadius: '12px',
+            backgroundColor: 'var(--primary-light)',
+            display: 'flex',
+            alignItems: 'center',
             justifyContent: 'center',
             color: 'var(--primary)'
           }}>
@@ -257,8 +257,8 @@ export default function LibraryView() {
         {/* Search Bar in Header */}
         <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
           <Search size={16} style={{ position: 'absolute', left: '12px', color: 'var(--text-muted)' }} />
-          <input 
-            type="text" 
+          <input
+            type="text"
             placeholder="Search catalog, ISBN, title..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
@@ -284,7 +284,7 @@ export default function LibraryView() {
           <div>
             <span style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase' }}>Active Borrow Quota</span>
             <div style={{ fontSize: '1.2rem', fontWeight: 800, color: 'var(--text-heading)', marginTop: '2px' }}>{borrowedBooks.length} / 5 Books Issued</div>
-            <span style={{ fontSize: '0.75rem', fontWeight: 700, color: '#10b981' }}>3 Slots Available</span>
+            <span style={{ fontSize: '0.75rem', fontWeight: 700, color: '#10b981' }}>1 Slots Available</span>
           </div>
         </div>
 
@@ -313,7 +313,7 @@ export default function LibraryView() {
 
       {/* Tabs & Section Layout */}
       <div className="dashboard-card" style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-        
+
         {/* Navigation Tabs */}
         <div style={{ display: 'flex', gap: '10px', borderBottom: '1px solid var(--border-color)', paddingBottom: '14px', flexWrap: 'wrap' }}>
           <button
@@ -384,8 +384,8 @@ export default function LibraryView() {
               const progressPct = Math.min(100, Math.round(((b.totalDays - b.daysLeft) / b.totalDays) * 100));
 
               return (
-                <div 
-                  key={b.id} 
+                <div
+                  key={b.id}
                   style={{
                     display: 'flex',
                     alignItems: 'center',
@@ -443,28 +443,28 @@ export default function LibraryView() {
                       <div style={{ fontSize: '0.95rem', fontWeight: 800, color: 'var(--text-heading)' }}>
                         {b.dueDate}
                       </div>
-                      <span style={{ 
-                        fontSize: '0.775rem', 
-                        fontWeight: 800, 
-                        color: b.daysLeft <= 3 ? '#f59e0b' : '#10b981' 
+                      <span style={{
+                        fontSize: '0.775rem',
+                        fontWeight: 800,
+                        color: b.daysLeft <= 3 ? '#f59e0b' : '#10b981'
                       }}>
                         Due in {b.daysLeft} days
                       </span>
                     </div>
 
-                    <button 
+                    <button
                       onClick={() => handleRenewBook(b.id)}
                       disabled={b.isRenewed}
                       className={b.isRenewed ? "btn-secondary" : "btn-primary"}
-                      style={{ 
-                        fontSize: '0.825rem', 
-                        padding: '8px 16px', 
+                      style={{
+                        fontSize: '0.825rem',
+                        padding: '8px 16px',
                         gap: '6px',
                         cursor: b.isRenewed ? 'default' : 'pointer',
-                        opacity: b.isRenewed ? 0.7 : 1 
+                        opacity: b.isRenewed ? 0.7 : 1
                       }}
                     >
-                      <RefreshCw size={14} className={b.isRenewed ? "" : ""} /> 
+                      <RefreshCw size={14} className={b.isRenewed ? "" : ""} />
                       {b.isRenewed ? 'Renewed' : 'Renew Book'}
                     </button>
                   </div>
@@ -478,8 +478,8 @@ export default function LibraryView() {
         {activeTab === 'EBOOKS' && (
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '16px' }}>
             {filteredEbooks.map(eb => (
-              <div 
-                key={eb.id} 
+              <div
+                key={eb.id}
                 style={{
                   padding: '18px',
                   borderRadius: '12px',
@@ -511,7 +511,7 @@ export default function LibraryView() {
 
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingTop: '10px', borderTop: '1px solid var(--border-color)' }}>
                   <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>{eb.size}</span>
-                  <button 
+                  <button
                     onClick={() => setSelectedEbook(eb)}
                     className="btn-secondary"
                     style={{ fontSize: '0.775rem', padding: '6px 12px', gap: '5px' }}
@@ -528,8 +528,8 @@ export default function LibraryView() {
         {activeTab === 'HISTORY' && (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
             {borrowHistory.map(item => (
-              <div 
-                key={item.id} 
+              <div
+                key={item.id}
                 style={{
                   display: 'flex',
                   justify: 'space-between',
@@ -574,10 +574,10 @@ export default function LibraryView() {
           zIndex: 1000,
           padding: '20px'
         }}>
-          <div className="dashboard-card" style={{ 
-            width: '100%', 
-            maxWidth: '520px', 
-            backgroundColor: 'var(--bg-card)', 
+          <div className="dashboard-card" style={{
+            width: '100%',
+            maxWidth: '520px',
+            backgroundColor: 'var(--bg-card)',
             borderRadius: '16px',
             padding: '24px',
             display: 'flex',

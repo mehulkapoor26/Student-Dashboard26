@@ -4,15 +4,14 @@ const ThemeContext = createContext();
 
 export const THEMES = [
   { id: 'light', name: 'Light Mode', icon: '☀️' },
-  { id: 'dark', name: 'Dark Mode', icon: '🌙' },
-  { id: 'neon', name: 'Cyber Neon', icon: '⚡' },
-  { id: 'emerald', name: 'Emerald Forest', icon: '🌿' },
-  { id: 'sunset', name: 'Warm Sunset', icon: '🌅' }
+  { id: 'dark', name: 'Dark Mode', icon: '🌙' }
 ];
 
 export function ThemeProvider({ children }) {
   const [theme, setThemeState] = useState(() => {
-    return localStorage.getItem('academix_theme') || 'light';
+    const saved = localStorage.getItem('academix_theme');
+    if (saved === 'dark' || saved === 'sunset') return 'dark';
+    return 'light';
   });
 
   const setTheme = (newTheme) => {

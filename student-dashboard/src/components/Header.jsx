@@ -29,15 +29,6 @@ export default function Header({ onLogout }) {
             Student Dashboard
           </span>
         </h1>
-        <span style={{
-          fontSize: '0.95rem',
-          fontStyle: 'italic',
-          fontWeight: 700,
-          color: 'var(--text-muted)',
-          letterSpacing: '0.5px'
-        }}>
-          Chitkara CUIET • PE-II
-        </span>
       </div>
 
       <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>

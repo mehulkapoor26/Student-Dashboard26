@@ -11,7 +11,8 @@ import {
   Download, 
   CheckCircle2, 
   ChevronRight,
-  ExternalLink
+  ExternalLink,
+  User
 } from 'lucide-react';
 
 export default function DashboardView({ setActiveTab, currentUser: propUser }) {
@@ -30,7 +31,10 @@ export default function DashboardView({ setActiveTab, currentUser: propUser }) {
   const studentRoll = currentUser?.rollNumber || '25109928';
   const studentProgram = currentUser?.program || 'B.Tech in Artificial Intelligence & Machine Learning';
   const studentMentor = currentUser?.mentor || 'Dr. Lakshita';
-  const studentAvatar = currentUser?.avatarUrl || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=300';
+  const rawAvatar = currentUser?.avatarUrl;
+  const studentAvatar = (rawAvatar && !rawAvatar.includes('photo-1534528741775'))
+    ? rawAvatar
+    : 'https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?auto=format&fit=crop&q=80&w=300';
 
   const notesList = [
     { id: 1, title: '24CSE0209_DBMS_NormalForms.pdf', author: 'Prof. R. Sharma', date: '2 days ago', size: '1.2 MB', category: 'DBMS' },
@@ -154,20 +158,30 @@ export default function DashboardView({ setActiveTab, currentUser: propUser }) {
             </div>
 
             {/* Avatar Profile Box */}
-            <div style={{ position: 'relative', marginLeft: '20px' }}>
+            <div style={{ position: 'relative', marginLeft: '20px', flexShrink: 0 }}>
               <div style={{
                 width: '90px',
                 height: '90px',
                 borderRadius: '50%',
                 overflow: 'hidden',
                 border: '3px solid var(--primary)',
-                boxShadow: '0 8px 20px rgba(0,0,0,0.15)'
+                boxShadow: '0 8px 20px rgba(0,0,0,0.15)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                background: 'linear-gradient(135deg, var(--primary) 0%, #6366f1 100%)',
+                color: '#ffffff'
               }}>
-                <img 
-                  src={studentAvatar} 
-                  alt={studentName} 
-                  style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                />
+                {studentAvatar && studentAvatar !== 'none' ? (
+                  <img 
+                    src={studentAvatar} 
+                    alt={studentName} 
+                    onError={(e) => { e.currentTarget.style.display = 'none'; }}
+                    style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                  />
+                ) : (
+                  <User size={44} strokeWidth={2.2} />
+                )}
               </div>
               <span style={{
                 position: 'absolute',

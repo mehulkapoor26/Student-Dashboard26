@@ -41,7 +41,9 @@ export default function MyInfoView({ currentUser: propUser, onUpdateUser: propUp
     section: currentUser?.section || 'U25AIML-G8',
     mentor: currentUser?.mentor || 'Dr. Lakshita',
     email: currentUser?.email || 'rohit.verma@apex.edu',
-    avatarUrl: currentUser?.avatarUrl || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=300',
+    avatarUrl: (currentUser?.avatarUrl && !currentUser?.avatarUrl.includes('photo-1534528741775'))
+      ? currentUser.avatarUrl
+      : 'https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?auto=format&fit=crop&q=80&w=300',
     dob: currentUser?.dob || '14 October 2004',
     gender: currentUser?.gender || 'Male',
     bloodGroup: currentUser?.bloodGroup || 'O+',
@@ -161,20 +163,71 @@ export default function MyInfoView({ currentUser: propUser, onUpdateUser: propUp
       {/* Student Top Header Card */}
       <div className="dashboard-card" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '24px', flexWrap: 'wrap' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '24px', flexWrap: 'wrap' }}>
-          <div style={{
-            width: '96px',
-            height: '96px',
-            borderRadius: '50%',
-            overflow: 'hidden',
-            border: '3px solid var(--primary)',
-            flexShrink: 0,
-            boxShadow: '0 4px 14px rgba(0,0,0,0.1)'
-          }}>
-            <img
-              src={formData.avatarUrl}
-              alt={formData.name}
-              style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-            />
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px' }}>
+            <div style={{
+              width: '96px',
+              height: '96px',
+              borderRadius: '50%',
+              overflow: 'hidden',
+              border: '3px solid var(--primary)',
+              flexShrink: 0,
+              boxShadow: '0 4px 14px rgba(0,0,0,0.1)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              background: 'linear-gradient(135deg, var(--primary) 0%, #6366f1 100%)',
+              color: '#ffffff'
+            }}>
+              {formData.avatarUrl && formData.avatarUrl !== 'none' ? (
+                <img
+                  src={formData.avatarUrl}
+                  alt={formData.name}
+                  onError={(e) => { e.currentTarget.style.display = 'none'; }}
+                  style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                />
+              ) : (
+                <User size={48} strokeWidth={2.2} />
+              )}
+            </div>
+
+            {isEditing && (
+              <div style={{ display: 'flex', gap: '6px' }}>
+                <button
+                  type="button"
+                  onClick={() => handleInputChange('avatarUrl', 'https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?auto=format&fit=crop&q=80&w=300')}
+                  style={{
+                    fontSize: '0.7rem',
+                    padding: '3px 8px',
+                    borderRadius: '6px',
+                    border: '1px solid var(--border-color)',
+                    backgroundColor: formData.avatarUrl && formData.avatarUrl !== 'none' ? 'var(--primary)' : 'var(--bg-subtle)',
+                    color: formData.avatarUrl && formData.avatarUrl !== 'none' ? '#fff' : 'var(--text-muted)',
+                    cursor: 'pointer',
+                    fontWeight: 600
+                  }}
+                  title="Use Student Photo"
+                >
+                  Student Photo
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleInputChange('avatarUrl', '')}
+                  style={{
+                    fontSize: '0.7rem',
+                    padding: '3px 8px',
+                    borderRadius: '6px',
+                    border: '1px solid var(--border-color)',
+                    backgroundColor: !formData.avatarUrl || formData.avatarUrl === 'none' ? 'var(--primary)' : 'var(--bg-subtle)',
+                    color: !formData.avatarUrl || formData.avatarUrl === 'none' ? '#fff' : 'var(--text-muted)',
+                    cursor: 'pointer',
+                    fontWeight: 600
+                  }}
+                  title="Set to None"
+                >
+                  None
+                </button>
+              </div>
+            )}
           </div>
           <div style={{ flex: 1, minWidth: '260px' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '6px', flexWrap: 'wrap' }}>

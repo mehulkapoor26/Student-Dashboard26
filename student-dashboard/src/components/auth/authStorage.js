@@ -11,7 +11,7 @@ export const DEFAULT_DEMO_USER = {
   gender: 'Male',
   dob: '14 October 2004',
   bloodGroup: 'O+',
-  avatarUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=300',
+  avatarUrl: 'https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?auto=format&fit=crop&q=80&w=300',
   password: 'password123'
 };
 
@@ -29,7 +29,18 @@ export function getRegisteredUsers() {
       localStorage.setItem(USERS_STORAGE_KEY, JSON.stringify(initial));
       return initial;
     }
-    return JSON.parse(raw);
+    const users = JSON.parse(raw);
+    let modified = false;
+    users.forEach((u) => {
+      if (u.avatarUrl && u.avatarUrl.includes('photo-1534528741775')) {
+        u.avatarUrl = 'https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?auto=format&fit=crop&q=80&w=300';
+        modified = true;
+      }
+    });
+    if (modified) {
+      localStorage.setItem(USERS_STORAGE_KEY, JSON.stringify(users));
+    }
+    return users;
   } catch (err) {
     console.error('Failed to load registered users from localStorage:', err);
     return [DEFAULT_DEMO_USER];
@@ -113,7 +124,13 @@ export function authenticateStudent(identifier, password) {
 export function getActiveSession() {
   try {
     const raw = localStorage.getItem(SESSION_STORAGE_KEY);
-    return raw ? JSON.parse(raw) : null;
+    if (!raw) return null;
+    const user = JSON.parse(raw);
+    if (user && user.avatarUrl && user.avatarUrl.includes('photo-1534528741775')) {
+      user.avatarUrl = 'https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?auto=format&fit=crop&q=80&w=300';
+      localStorage.setItem(SESSION_STORAGE_KEY, JSON.stringify(user));
+    }
+    return user;
   } catch (err) {
     return null;
   }

@@ -12,10 +12,7 @@ export default function SettingsView({ onLogout: propLogout }) {
 
   const themeDescriptions = {
     light: 'Crisp, bright daylight theme with clear high-contrast typography.',
-    dark: 'Sleek dark obsidian layout with glowing blue accents for reduced eye strain.',
-    neon: 'High-contrast cyberpunk neon palette with luminous magenta and cyan glows.',
-    emerald: 'Soothing emerald forest theme with earthy greens and mint highlights.',
-    sunset: 'Rich dusky twilight palette with sunset amber and violet gradients.'
+    dark: 'Rich dusky twilight palette with sunset amber and violet gradients.'
   };
 
   const handleSelectTheme = (themeId) => {
